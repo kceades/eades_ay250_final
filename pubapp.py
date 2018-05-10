@@ -121,17 +121,6 @@ def sn_query():
 	except:
 		return render_template('query_failure.html',sn_name=request.form['key'])
 
-@app.route('/phase_query',methods=['POST'])
-def phase_query():
-	""" Method to handle a specific phase query for a specific supernova. """
-	try:
-		name = request.form['sn_name']
-		phase = float(request.form['phase'])
-		
-		return render_template('phase_query_success.html')
-	except:
-		return render_template('phase_query_failure.html',sn_name=request.form['sn_name'],phase=request.form['phase'])
-
 @app.route('/view_model',methods=['POST'])
 def view_model():
 	""" Method to handle post requests to view the model components. """
