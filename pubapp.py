@@ -14,6 +14,7 @@ import pubnorm
 # imports from standard modules
 import os
 import numpy as np
+import pickle
 from flask import Flask,request,redirect,url_for,render_template,send_from_directory
 
 UPLOAD_FOLDER = './pubcsv'
@@ -100,12 +101,36 @@ def base():
 	except:
 		return render_template('base_failure.html')
 
-
-
 @app.route('/viewing',methods=['GET'])
 def viewing():
 	""" Method to handle the viewing page. """
 	return render_template('viewing.html')
+
+@app.route('/sn_query',methods=['POST'])
+def sn_query():
+	""" Method to handle supernova queries. """
+	try:
+		pubmeta = pickle.load(open('pubmeta.p','rb'))
+		query = request.form['key']
+		for key in pubmeta:
+			for name in pubmeta[key]['names']:
+				if name==query:
+					print('here')
+					content = [[first,pubmeta[key][first]] for first in pubmeta[key]]
+					return render_template('query_success.html',query=query,content=content,phases=pubmeta[key]['phases'])
+	except:
+		return render_template('query_failure.html',sn_name=request.form['key'])
+
+@app.route('/phase_query',methods=['POST'])
+def phase_query():
+	""" Method to handle a specific phase query for a specific supernova. """
+	try:
+		name = request.form['sn_name']
+		phase = float(request.form['phase'])
+		
+		return render_template('phase_query_success.html')
+	except:
+		return render_template('phase_query_failure.html',sn_name=request.form['sn_name'],phase=request.form['phase'])
 
 @app.route('/view_model',methods=['POST'])
 def view_model():

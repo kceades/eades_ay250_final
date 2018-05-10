@@ -7,6 +7,15 @@
 
 <p>On this page, you can view various different things related to the public supernova that you downloaded. If you haven't already, go back to the <a href="{{ url_for('datacreation') }}">data creation</a> and run through all the scripts there before proceeding here.</p>
 
+<h1>Query a Supernova</h1>
+
+<p>Here, you can query a supernova to see if it is in the downloaded data and view information about it.</p>
+
+<form action="{{ url_for('sn_query') }}" method="post" enctype="multipart/form-data">
+	<p>Supernova name:</p><input type="text" name="key">
+	<input type="submit" value="Query Supernova">
+</form>
+
 <h1>View the Model</h1>
 
 <p>Here, you can view the components that make up the supernova model at a given phase and model type. For the phase, please select a phase from what was used in the data creation (default is -10,-5,...,40).</p>

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Query Succeeded!{% endblock %}
+
+{% block content %}
+<h1>Query Success!</h1>
+
+<p>Your search for {{ query }} did have a match in our system! Here's the metadata we have on it:</p>
+
+{% for item in content %}
+<p>{{ item[0] }} has the value(s) {{ item[1] }}</p>
+{% endfor %}
+
+<select name="phase" form="phase_form">
+	{% for phase in phases %}
+	<option value="{{ phase }}">{{ phase }}</option>
+	{% endfor %}
+</select>
+
+<form action="{{ url_for('phase_query') }}" method="post" enctype="multipart/form-data" id="phase_form">
+	<p>Supernova name (don't change):</p><input type="text" name="sn_name" value="{{ query }}">
+	<input type="submit" value="Query Selected Phase">
+</form>
+
+{% endblock %}

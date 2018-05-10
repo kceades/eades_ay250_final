@@ -74,6 +74,12 @@ class Normalizer(object):
 		net = MLPRegressor()
 		net.fit(training,training_phases)
 
+		ml_algs = {'forest':forest,'net':net}
+		ml_name = os.path.join(self.data_dir,'fitter.p')
+		ml_file = open(ml_name,'wb')
+		pickle.dump(ml_algs,ml_file)
+		ml_file.close()
+
 		phase_pairs = []
 		final_novas = {phase:[] for phase in self.novas}
 		for phase in self.novas:

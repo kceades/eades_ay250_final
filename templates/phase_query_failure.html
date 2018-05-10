@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Query Failed{% endblock %}
+
+{% block content %}
+<h1>Query Failed</h1>
+
+<p>We're sorry, your query for {{ sn_name }} at phase {{ phase }} encountered an error. Feel free to return to the <a href="{{ url_for('viewing') }}">viewing</a> page to start submitting another query.</p>
+{% endblock %}
