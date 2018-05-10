@@ -4,9 +4,6 @@ Authors:
 	kceades
 """
 
-# import from Sam's class file
-import IDRTools
-
 # import from files I wrote
 import tools
 
@@ -72,9 +69,9 @@ class Parameters(object):
 		self.max_error = 0.5
 
 		# where the BSNIP spectra are stored
-		self.bsnip_path = '/home/kceades/Documents/research/BSNIPI_spectra/'
+		self.bsnip_dir = self.base_dir + '/BSNIPI_spectra'
 		# where the public metadata is stored (from the scraper module)
-		self.pubmeta_file = '/home/kceades/Documents/research/pubmeta.p'
+		self.pubmeta_file = os.path.join(self.base_dir,'pubmeta.p')
 
 
 
@@ -83,18 +80,36 @@ class SnSet(object):
 	Creates a sort of dataset containing all the supernova from factory and
 	public data, prioritizing them in that order (in terms of non-repeating)
 	"""
-	def __init__(self,pop_source='Public',normalize=True):
+	def __init__(self,pop_source='Public',normalize=True,pop_on_start=True\
+		,pars=None):
 		"""
 		Constructor
 
 		:pop_source: (str) from Parameters.sources
 		:normalize: (bool) whether to normalize the data or not
+		:pop_on_start: (bool) whether to populate all the data when an instance
+						of the class is created
+		:pars: (Parameters object or None) Parameters object containing all the
+				parameters to use in dealing with the spectra
 		"""
-		self.pars = Parameters()
+		if pars:
+			self.pars = pars
+		else:
+			self.pars = Parameters()
 		self.keys = {}
 		self.data = {}
 		self.odd_data = {}
 
+		if pop_on_start:
+			self.populate(pop_source,normalize)
+
+	def populate(self,pop_source='Public',normalize=True):
+		"""
+		Populates the data
+
+		:pop_source: (str) from Parameters.sources
+		:normalize: (bool) whether to normalize the data or not
+		"""
 		if pop_source in ['Factory','All']:
 			self.pop_factory()
 		if pop_source in ['Public','All']:
@@ -156,12 +171,12 @@ class SnSet(object):
 		these spectra are all nominally at max light.
 		"""
 		names = []
-		for (dirpath,dirnames,filenames) in walk(self.pars.bsnip_path):
+		for (dirpath,dirnames,filenames) in walk(self.pars.bsnip_dir):
 			for nfile in filenames:
 				if nfile[0] == 's':
 					names.append(nfile)
 		bsnipreds = {}
-		redfile = open(self.pars.bsnip_path + 'manifest.txt')
+		redfile = open(self.pars.bsnip_dir + 'manifest.txt')
 		reddata = csv.reader(redfile,delimiter='\n')
 		for row in reddata:
 			redlist = row[0].split()
@@ -173,7 +188,7 @@ class SnSet(object):
 			if name in self.keys:
 				continue
 			self.data[name] = []
-			cfile = open(self.pars.bsnip_path + file)
+			cfile = open(self.pars.bsnip_dir + file)
 			fdata = csv.reader(cfile,delimiter='\n')
 			cdict = {'w':[],'f':[],'v':[]}
 			for row in fdata:

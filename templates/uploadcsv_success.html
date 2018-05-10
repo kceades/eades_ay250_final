@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Successfully Uploaded CSV!{% endblock %}
+
+{% block content %}
+<h1>Successfully Uploaded CSV!</h1>
+
+<p>Success! Your CSV file ({{ file_name }}) uploaded properly. If you wish to use it to generate a new set of spectra to work with, head over to the <a href="{{ url_for('datacreation') }}">Run Scripts</a> section. If you wish to upload a different CSV, head back to the <a href="{{ url_for('uploadcsv') }}">Upload CSV</a> page.</p>
+{% endblock %}

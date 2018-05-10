@@ -31,8 +31,12 @@ class Abase(object):
 	series of html files and images to view a full gallery of fitting across
 	all the supernova using different training and target sources.
 	"""
-	def __init__(self):
-		""" Constructor for the Abase (analysis base) object """
+	def __init__(self,pop_on_start=True):
+		"""
+		Constructor for the Abase (analysis base) object
+
+		:pop_on_start: (bool) whether to populate the data at the start or not
+		"""
 		self.pars = creator.Parameters()
 		self.novas = {}
 		self.phase_novas = {}
@@ -43,55 +47,78 @@ class Abase(object):
 		if not os.path.isdir(self.base_dir):
 			os.makedirs(self.base_dir)
 
-		self.pop_novas()
-		self.pop_objects()
-		self.pop_coeffs()
+		if pop_on_start:
+			self.pop_novas()
+			self.pop_objects()
+			self.pop_coeffs()
 
-		self.pop_phases()
+			self.pop_phases()
 
 		self.exp_dict = {}
 
 	def pop_novas(self):
 		""" Populates the novas dictionary """
 		for source in self.pars.sources:
-			novaname = os.path.join(self.pars.base_dir,source+'_Novas.p')
-			novafile = open(novaname,'rb')
-			self.novas[source] = pickle.load(novafile)
-			novafile.close()
+			for version in ['','_FIXED']:
+				try:
+					novaname = os.path.join(self.pars.base_dir,source+'_Novas'\
+						+version+'.p')
+					novafile = open(novaname,'rb')
+					self.novas[source+version] = pickle.load(novafile)
+					novafile.close()
+				except:
+					pass
 
 	def pop_objects(self):
 		""" Populates the object dictionary """
 		for source in self.pars.sources:
-			object_name = os.path.join(self.pars.base_dir,source+'_Objects.p')
-			object_file = open(object_name,'rb')
-			self.a_objects[source] = pickle.load(object_file)
-			object_file.close()
+			for version in ['','_FIXED']:
+				try:
+					obj_name = os.path.join(self.pars.base_dir,source+'_Objects'\
+						+version+'.p')
+					obj_file = open(obj_name,'rb')
+					self.a_objects[source+version] = pickle.load(obj_file)
+					obj_file.close()
+				except:
+					pass
 
 	def pop_coeffs(self):
 		""" Populates the coefficients dictionary """
 		for source in self.pars.sources:
-			coeff_name = os.path.join(self.pars.base_dir,source+'_Coeffs.p')
-			coeff_file = open(coeff_name,'rb')
-			self.a_coeffs[source] = pickle.load(coeff_file)
-			coeff_file.close()
+			for version in ['','_FIXED']:
+				try:
+					coeff_name = os.path.join(self.pars.base_dir,source\
+						+'_Coeffs'+version+'.p')
+					coeff_file = open(coeff_name,'rb')
+					self.a_coeffs[source_version] = pickle.load(coeff_file)
+					coeff_file.close()
+				except:
+					pass
 
 	def pop_phases(self):
 		""" creates a dictionary of novas by phase """
 		for source in self.pars.sources:
-			phasename = os.path.join(self.pars.base_dir,source+'_Novas_Phase.p')
-			phasefile = open(phasename,'rb')
-			self.phase_novas[source] = pickle.load(phasefile)
-			phasefile.close()
+			for version in ['','_FIXED']:
+				try:
+					phase_name = os.path.join(self.pars.base_dir,source\
+						+'_Novas_Phase'+version+'.p')
+					phase_file = open(phase_name,'rb')
+					self.phase_novas[source+version] = pickle.load(phase_file)
+					phase_file.close()
+				except:
+					pass
+		self.pars.main_sources = [source for source in self.novas]
 
-	def web_components(self,analysis_mode,source):
+	def web_components(self,analysis_mode,source,phase):
 		"""
 		creates the plots for and saves the html page of the components of a
 		model
 
 		:analysis_mode: (str) choose from creator.Parameters.model_modes
 		:source: (str) choose from snmc.Parameters.sources
+		:phase: (int) choose from snmc.Parameters.phases
 		"""
-		comps = self.a_objects[source][analysis_mode][0].components_
+		comps = self.a_objects[source][analysis_mode][phase].components_
 		webstring = """<!DOCTYPE html>
 
 <html lang='en-US'>
@@ -101,11 +128,11 @@ class Abase(object):
 <head>
 
 
-<title>Principle Components: """ + ' '.join([source,analysis_mode])\
-	+ """ Training</title>
+<title>Principle Components: """ + ' '.join([source,analysis_mode,'Phase {}'\
+	.format(phase)])+ """ Training</title>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
-<link rel='stylesheet' href='sitestyle.css'>
+<link rel='stylesheet' href='../../../../static/gallerypage.css'>
 
 
 </head>
@@ -114,7 +141,8 @@ class Abase(object):
 
 <body>
 
-<h1>""" + ' '.join([source,analysis_mode,'Components']) + """</h1>
+<h1>""" + ' '.join([source,analysis_mode,'Phase {}'.format(phase)\
+	,'Components']) + """</h1>
 
 """
 		plt.ioff()
@@ -124,7 +152,10 @@ class Abase(object):
 		source_dir = ''.join([savedir,'/',source])
 		if not os.path.isdir(source_dir):
 			os.makedirs(source_dir)
-		comps_dir = ''.join([source_dir,'/comps'])
+		phase_dir = ''.join([source_dir,'/',str(phase)])
+		if not os.path.isdir(phase_dir):
+			os.makedirs(phase_dir)
+		comps_dir = ''.join([phase_dir,'/comps'])
 		if not os.path.isdir(comps_dir):
 			os.makedirs(comps_dir)
 		for j in range(self.pars.num_components):
@@ -149,11 +180,11 @@ class Abase(object):
 
 </html>
 """
-		savesite = open(os.path.join(source_dir,'comps.html'),'w')
+		savesite = open(os.path.join(phase_dir,'comps.html'),'w')
 		savesite.write(webstring)
 		savesite.close()
 
-	def gallery_images(self,analysis_mode,source,target):
+	def gallery_images(self,analysis_mode,source,target,phase):
 		"""
 		creates dictionaries of the target supernovas being fitted to the source
 		generated model
@@ -161,9 +192,10 @@ class Abase(object):
 		:analysis_mode: (str) choose from creator.Parameters.model_modes
 		:source: (str) choose from snmc.Parameters.sources
 		:target: (str) choose from snmc.Parameters.sources
+		:phase: (int) choose from snmc.Parameters.phases
 		"""
-		target_novas = self.phase_novas[target][0]
-		source_object = self.a_objects[source][analysis_mode][0]
+		target_novas = self.phase_novas[target][phase]
+		source_object = self.a_objects[source][analysis_mode][phase]
 		num_novas = len(target_novas)
 
 		coeffs = []
@@ -181,7 +213,7 @@ class Abase(object):
 		self.worst_chis = chi_sort
 		self.worst_ls = ls_sort
 
-	def gallery_maker(self,stat_mode,analysis_mode,source,target):
+	def gallery_maker(self,stat_mode,analysis_mode,source,target,phase):
 		"""
 		create the full gallery of supernova images, and publish the html
 
@@ -189,6 +221,7 @@ class Abase(object):
 		:analysis_mode: (str) choose from creator.Parameters.model_modes
 		:source: (str) choose from snmc.Parameters.sources
 		:target: (str) choose from snmc.Parameters.sources
+		:phase: (int) choose from snmc.Parameters.phases
 		"""
 		webstring = """<!DOCTYPE html>
 
@@ -203,7 +236,7 @@ class Abase(object):
 + """</title>
 <meta charset='UTF-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
-<link rel='stylesheet' href='sitestyle.css'>
+<link rel='stylesheet' href='../../static/gallerypage.css'>
 
 
 </head>
@@ -214,11 +247,11 @@ class Abase(object):
 
 <h1>""" + ' '.join([source,'Training Applied to',target]) + """ Novas</h1>
 
-<h1>""" + ' '.join([stat_mode,analysis_mode]) + """</h1>
+<h1>""" + ' '.join([stat_mode,analysis_mode,'Phase {}'.format(phase)]) + """</h1>
 
 """
 		plt.ioff()
-		self.gallery_images(analysis_mode,source,target)
+		self.gallery_images(analysis_mode,source,target,phase)
 		savedir = ''.join([self.base_dir,'/images','_',analysis_mode])
 		if not os.path.isdir(savedir):
 			os.makedirs(savedir)
@@ -228,6 +261,9 @@ class Abase(object):
 		target_dir = ''.join([source_dir,'/',target])
 		if not os.path.isdir(target_dir):
 			os.makedirs(target_dir)
+		phase_dir = ''.join([target_dir,'/',str(phase)])
+		if not os.path.isdir(phase_dir):
+			os.makedirs(phase_dir)
 
 		if stat_mode=='chi':
 			looking_at = self.worst_chis
@@ -235,7 +271,7 @@ class Abase(object):
 			looking_at = self.worst_ls
 		distribution = [x[0] for x in looking_at]
 		plt.hist(distribution,25,facecolor='green')
-		histsavepath = os.path.join(target_dir,''.join(['histogram_',stat_mode\
+		histsavepath = os.path.join(phase_dir,''.join(['histogram_',stat_mode\
 			,'.png']))
 		plt.xlabel(stat_mode)
 		plt.ylabel('Number of Supernova')
@@ -249,10 +285,10 @@ class Abase(object):
 			res = np.subtract(x[1].signal['dust_flux'],x[1].fits\
 				[self.pars.num_components-1][1])
 
-			fsavepath = os.path.join(target_dir,''.join([x[1].key,'_Fit.png']))
-			ressavepath = os.path.join(target_dir,''.join([x[1].key\
+			fsavepath = os.path.join(phase_dir,''.join([x[1].key,'_Fit.png']))
+			ressavepath = os.path.join(phase_dir,''.join([x[1].key\
 				,'_Res.png']))
-			coeffsavepath = os.path.join(target_dir,''.join([x[1].key\
+			coeffsavepath = os.path.join(phase_dir,''.join([x[1].key\
 				,'_Coeffs.png']))
 
 			plt.figure()
@@ -302,12 +338,12 @@ class Abase(object):
 </html>"""
 		webname = os.path.join(''.join([self.base_dir,'/images_'\
 			,analysis_mode]),''.join([source,'_',target,'_',stat_mode\
-			,'_site.html']))
+			,'_{}'.format(phase),'_site.html']))
 		webfile = open(webname,'w')
 		webfile.write(webstring)
 		webfile.close()
 
-	def white_noise(self,source='Public',target='Factory',phase=0\
+	def white_noise(self,source='Public',target='Public',phase=0\
 		,model_mode='PCA'):
 		"""
 		Tests to see whether the residual after fitting target supernova with
@@ -689,3 +725,199 @@ class Abase(object):
 		plt.title('Number of Supernova by Phase')
 		plt.savefig(os.path.join(self.base_dir,'phase_number_histogram.png'))
 		plt.close()
+
+
+
+##########################################
+# Note this next section of code is
+# solely to run in a parallel
+# fashion. To run it in a single thread/
+# process, just create an Abase object
+# and call the run_everything() method
+##########################################
+
+def white_noise_single(source,target):
+	"""
+	Helper function to be able to make the white noise plots in parallel.
+
+	:source: (str) choose from snmc.Parameters.sources
+	:target: (str) choose from snmc.Parameters.sources
+	"""
+	params = creator.Parameters()
+	base_object = Abase()
+	for phase in params.phases:
+		for model_mode in params.model_modes:
+			base_object.white_noise(source,target,phase,model_mode)
+
+def make_white_noise_parallel():
+	"""
+	Method to make white noise residual plots in a parallelized fashion using
+	processes.
+	"""
+	processes = []
+	params = creator.Parameters()
+	for source in params.main_sources:
+		for target in params.main_sources:
+			p = Process(target=white_noise_single,args=(source,target,))
+			p.start()
+			processes.append(p)
+	for p in processes:
+		p.join()
+
+def parallel_components_single(model_mode,source):
+	"""
+	Helper function to be able to make the web component pages in parallel.
+
+	:model_mode: (str) choose from creator.Parameters.model_sources
+	:source: (str) choose from snmc.Parameters.sources
+	"""
+	base_object = Abase()
+	base_object.web_components(model_mode,source)
+
+def make_components_parallel():
+	"""
+	Method to make the component plots in a parallelized fashion using processes
+	"""
+	params = creator.Parameters()
+	processes = []
+	for model_mode in params.model_modes:
+		for source in params.main_sources:
+			p = Process(target=parallel_components_single\
+				,args=(model_mode,source,))
+			p.start()
+			processes.append(p)
+	for p in processes:
+		p.join()
+
+def parallel_gallery_single(stat_mode,model_mode):
+	"""
+	Helper function to be able to make a web gallery page in parallel.
+
+	:stat_mode: (str) choose from ['chi','rms']
+	:model_mode: (str) choose from creator.Parameters.model_modes
+	"""
+	params = creator.Parameters()
+	base_object = Abase()
+	for source in params.main_sources:
+		for target in params.main_sources:
+			base_object.gallery_maker(stat_mode,model_mode,source,target)
+
+def make_gallery_parallel():
+	"""
+	Method to make the web galleries in a parallelized fashion using processes.
+	"""
+	processes = []
+	for stat_mode in ['chi','rms']:
+		for model_mode in ['PCA','emFA']:
+			p = Process(target=parallel_gallery_single\
+				,args=(stat_mode,model_mode,))
+			p.start()
+			processes.append(p)
+	for p in processes:
+		p.join()
+
+def parallel_variance_single(model_mode,source):
+	"""
+	Helper function to be able to make the explained variance curves
+	(individual) in parallel.
+
+	Note: in the target for loop, any combination of strings from
+		snmc.Parameters.sources are valid to use in the list.
+
+	:model_mode: (str) choose from creator.Parameters.model_modes
+	:source: (str) choose from snmc.Parameters.sources
+	"""
+	base_object = Abase()
+	params = creator.Parameters()
+	for target in params.main_sources:
+		base_object.explained_variance(model_mode,source,target)
+
+def make_variance_parallel():
+	"""
+	Method to make the variance plots in a parallelized fashion using processes.
+
+	Note: in the source for loop, any combination of strings from
+		snmc.Parameters.sources are valid to use in the list.
+	"""
+	processes = []
+	params = creator.Parameters()
+	for model_mode in params.model_modes:
+		for source in params.main_sources:
+			p = Process(target=parallel_variance_single\
+				,args=(model_mode,source,))
+			p.start()
+			processes.append(p)
+	for p in processes:
+		p.join()
+
+def create_web_gallery(print_progress=True):
+	"""
+	Create all of the web gallery in a parallelized fashion.
+
+	:print_progress: (bool) (optional) whether to print progress through the
+						various parts of building the site
+	"""
+	if print_progress:
+		print('doing the components')
+	make_components_parallel()
+	if print_progress:
+		print('doing the gallery')
+	make_gallery_parallel()
+	if print_progress:
+		print('doing the variance')
+	make_variance_parallel()
+
+
+##########################################
+# End of parallelized code section
+##########################################
+
+
+##########################################
+# Code for what will be visible in the
+# public repo of the final project
+##########################################
+
+def final_demo_single(source,mode):
+	base = Abase()
+	base.explained_variance(mode,source,source)
+	for phase in base.phase_novas:
+		base.gallery_maker('rms',mode,source,source,phase)
+		base.web_components(mode,source,phase)
+
+def create_all_final_demo(print_progress=True):
+	"""
+	Create all the data for the final project in AY250 (from a reduced dataset
+	of just public data).
+
+	:print_progress: (bool) (optional) whether to print progress through the
+						various parts of building the site
+	"""
+	processes = []
+	base = Abase()
+	pars = creator.Parameters()
+	for source in ['Public','Public_FIXED']:
+		for mode in ['PCA','emFA']:
+			if print_progress:
+				print(source + mode + ' started')
+				print('doing explained variance')
+			base.explained_variance(mode,source,source)
+			for phase in pars.phases:
+				if print_progress:
+					print('starting phase {}'.format(phase))
+				if print_progress:
+					print('doing gallery maker')
+				base.gallery_maker('rms',mode,source,source,phase)
+				if print_progress:
+					print('doing the components')
+				base.web_components(mode,source,phase)
+
+##########################################
+# Example of how to run this code
+##########################################
+# if __name__ == '__main__':
+# 	create_web_gallery()
+# 	make_white_noise_parallel()
+# 	base = Abase()
+# 	base.group_explained_variance_plots()
+# 	base.pub_comp_breakdown()

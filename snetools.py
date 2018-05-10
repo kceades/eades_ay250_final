@@ -7,7 +7,6 @@ Authors:
 # imports from files I wrote
 import snmc
 import tools
-import mlalgs
 
 # import from standard packages
 import numpy as np
@@ -33,7 +32,7 @@ def create_coeff_dict(spectra,signal_mode,a_object):
 	CM = a_object.transform([spec.signal[signal_mode] for spec in spectra])
 	return {'avg':np.mean(CM,axis=0),'std':np.std(CM,axis=0)}
 
-def create_model(spectra,signal_mode,a_type,num_components,reject_sigma=5):
+def create_model(spectra,signal_mode,a_type,num_components,reject_sigma=4):
 	"""
 	Creates an analysis object based on the source spectra with the specified
 	signal and number of components. Iterates until there are no outliers (rms)
@@ -108,20 +107,6 @@ def find_outliers(spectra,signal_mode,a_object,reject_sigma):
 	rms_threshold = np.mean([spec.rms for spec in spectra]) \
 		+ reject_sigma*np.std([spec.rms for spec in spectra])
 	return set([spec.key for spec in spectra if spec.rms>=rms_threshold])
-
-def fit_phase(spectrum,signal_mode,phaser):
-	"""
-	Fits the phase for the input spectrum (which is presumably an outlier in
-	the phased PCA fits) under the given signal type to the set of 'good'
-	(properly phased) spectra. It stores this new phase under the spectrum's
-	self.rephase property.
-
-	:spectrum: (snmc.Spectrum object) the spectrum to fit the phase of
-	:signal_mode: (str) the type of signal mode to use
-	:phaser: (phaser object) the phaser to use for fitting
-	"""
-	fit = phaser.fit(spectrum.signal[signal_mode])
-	spectrum.rephase = fit.value
 
 def fit_rv(spectrum,signal_mode,a_object):
 	"""

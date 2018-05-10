@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: View Explained Variance{% endblock %}
+
+{% block content %}
+<h1>Explained Variance Curves for {{ mode }} Training at Phase {{ phase }}</h1>
+
+<div class='holder'>
+{% for file in images %}
+<img src="{{ url_for('static',filename=file) }}" alt="{{ file }}">
+{% endfor %}
+</div>
+{% endblock %}

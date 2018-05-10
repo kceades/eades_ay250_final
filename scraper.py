@@ -29,6 +29,7 @@ class Parameters(object):
 			'https://sne.space/astrocats/astrocats/supernovae/output/json/'
 		self.base_dir = os.getcwd()
 		self.spec_dir = self.base_dir + '/pubspectra'
+		self.csv_dir = self.base_dir + '/pubcsv'
 		if not os.path.isdir(self.spec_dir):
 			os.makedirs(self.spec_dir)
 
@@ -40,9 +41,14 @@ class Scraper(object):
 		""" Constructor """
 		self.pars = Parameters()
 
-	def run(self):
-		""" Runs the scraper """
-		self.load_urls()
+	def run(self,filename='defaultsne.csv'):
+		"""
+		Runs the scraper.
+
+		:filename: (str) the name of the locally saved csv file with the
+					urls to pull data from
+		"""
+		self.load_urls(filename)
 		self.pull_data()
 	
 	def load_urls(self,filename='defaultsne.csv'):
@@ -50,9 +56,9 @@ class Scraper(object):
 		Loads the urls based on the csv file saved locally
 
 		:filename: (str) the name of the locally saved csv file with the
-					urls for pull data from
+					urls to pull data from
 		"""
-		name_file = os.path.join(self.pars.base_dir,filename)
+		name_file = os.path.join(self.pars.csv_dir,filename)
 		names = pd.read_csv(name_file).Name
 		self.url_filename = filename
 		self.urls = [self.pars.prefix+name.replace(' ','%20')+'.json' \
@@ -84,13 +90,19 @@ class Scraper(object):
 							and therefore wasn't added to the dictionary and
 						True if the given url is able to be added
 		"""
-		r = requests.get(url)
-		data = json.loads(r.content)
+		try:
+			r = requests.get(url)
+			data = json.loads(r.content)
+		except:
+			return False
 		sn_key = list(data.keys())[0]
 		if sn_key in self.sns:
 			return False
 		data = data[sn_key]
-		nova_info = self.get_nova_info(data)
+		try:
+			nova_info = self.get_nova_info(data)
+		except:
+			nova_info = None
 		if nova_info is None:
 			return False
 		try:
@@ -268,6 +280,6 @@ class Scraper(object):
 ###################################
 # Example of how to run this code
 ###################################
-# if __name__ == '__main__':
-# 	scraper_object = Scraper()
-# 	scraper_object.run()
+if __name__ == '__main__':
+	scraper_object = Scraper()
+	scraper_object.run()

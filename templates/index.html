@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE Home{% endblock %}
+
+{% block content %}
+<h1>Welcome to the PubSNE Project</h1>
+
+<p>This site is designed to facilitate understanding and using the scripts I have written to access and manipulate public domain supernova data.</p>
+
+<p>General overview of the project: the basic idea behind the overall research project is to develop a model of supernova spectra as a function of phase (days since explosion) that minimizes the variance between supernovae. This model could be taken further to use in simulating synthetic spectra, getting estimates of the Hubble constant, looking for R_V variations in public supernovae, and in the shiny lights better constraining parameters of the universe.</p>
+
+<p>Granted, there is still a lot of work to do on it and it is still in a pretty rough state at the moment.</p>
+
+<p>Important note: this isn't exactly a big data project but the amount of data and processing is still large enough that running any of the scripts (especially the scraper or the gallery creator) will bog down your machine for a while. It is also big enough to where I didn't add the results of the script to the repository in order to keep it lightweight and easy to fork. So if you want to actually view the results, the best method for doing so is to:
+	<ol>
+		<li>Fork the repository</li>
+		<li>cd to the folder where it is forked</li>
+		<li>Open a python terminal and type run pubapp.py</li>
+		<li>Go to your localhost as directed where the app is being run</li>
+		<li>(if desired) Upload a new csv file from sne.space as explained on the Upload CSV page</li>
+		<li>Run the scraper script</li>
+		<li>Run the creator script</li>
+		<li>Run the base script</li>
+	</ol>
+After all these steps are completed, there will be useful images that are created and can be viewed nicely on the View Results page. Note that this will take up on the order of a gigabyte or two of space.</p>
+
+<p>Of course, if you want to edit what processing goes on and how the data is manipulated, you'll need to dive into the scripts themselves.</p>
+{% endblock %}

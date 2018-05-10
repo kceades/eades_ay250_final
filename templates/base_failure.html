@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Base Analysis Failed!{% endblock %}
+
+{% block content %}
+<h1>Base Analysis Failed!</h1>
+
+<p>We're sorry, the base analysis script failed to create the image galleries displaying characteristics of the dataset. If you like, head back to the <a href="{{ url_for('datacreation') }}">data creation</a> page.</p>
+
+<p>Helpful tips for succes:
+	<ul>
+		<li>Ensure you've uploaded a csv file properly already.</li>
+		<li>Ensure you've ran the scraper to pull the data and verify that the folder it downloads spectra to (pubspectra) is not empty.</li>
+		<li>Ensure that the parameters you entered for the data creation are reasonable: i.e., wavelengths that start somewhere around 4000 and end somewhere around 8000 (angstroms) with a reasonable integer step; phases that start around -10 and end around 40 (days) with a reasonable integer step around 5, say.</li>
+		<li>Make sure you've ran the data creation script.</li>
+	</ul>
+</p>
+{% endblock %}

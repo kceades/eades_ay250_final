@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Successfully Uploaded CSV!{% endblock %}
+
+{% block content %}
+<h1>Failure to Upload CSV!</h1>
+
+<p>We're sorry, there was an error processing your selected CSV file. If you wish to try to upload a different CSV, head back to the <a href="{{ url_for('uploadcsv') }}">Upload CSV</a> page.</p>
+{% endblock %}

@@ -1,0 +1,119 @@
+* {
+	box-sizing: border-box;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	font-family: Sans-Serif;
+	color: black;
+	padding: 0;
+	margin: 0;
+}
+
+.navbar {
+	width: 100%;
+	height: auto;
+	display: block;
+	background-color: #99ddff;
+	margin: 0;
+	padding: 0;
+	font-size: 0;
+}
+
+.navbar ul {
+	width: 100%;
+	height: auto;
+	padding: 0;
+	margin: 0;
+}
+
+.navbar ul li {
+	display: inline-block;
+	width: 25%;
+	height: auto;
+	padding: 0;
+	margin: 0;
+	text-align: center;
+}
+
+.navbar ul li a {
+	text-decoration: none;
+	color: black;
+	font-size: 12pt;
+	font-weight: bold;
+	display: block;
+	width: 100%;
+	height: auto;
+	padding: 0.25cm;
+	margin: 0;
+}
+
+.navbar ul li:hover {
+	background-color: #004466;
+}
+
+.navbar ul li:hover a {
+	color: white;
+}
+
+h1 {
+	text-align: center;
+	margin-top: 0.75cm;
+	margin-bottom: 0.25cm;
+}
+
+p {
+	margin: 0.25cm;
+}
+
+input {
+	margin-left: 0.35cm;
+}
+
+.holder {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+img {
+	width: 30%;
+	height: auto;
+	align-self: center;
+}
+
+.gallery {
+	display: inline-block;
+	width: calc(100%/3);
+}
+
+.gallery:nth-child(odd) {
+	background-color: grey;
+}
+
+.gallery:nth-child(even) {
+	background-color: black;
+	color: white;
+}
+
+.gallery p {
+	font-size: 16pt;
+	text-align: center;
+}
+
+.gallery img {
+	width: 90%;
+	height: auto;
+	margin: 0;
+	margin-left: 5%;
+	text-align: center;
+}
+
+.gallery img:last-child {
+	margin-bottom: 0.2cm;
+}

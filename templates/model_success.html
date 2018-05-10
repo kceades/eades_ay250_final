@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: View Model Components{% endblock %}
+
+{% block content %}
+<h1>{{ source }} {{ mode }} Phase {{ phase }} Components</h1>
+
+<div class='holder'>
+{% for file in images %}
+<img src="{{ url_for('static',filename=file) }}" alt="{{ file }}">
+{% endfor %}
+</div>
+{% endblock %}

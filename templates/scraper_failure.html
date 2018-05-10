@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Scraping Failed!{% endblock %}
+
+{% block content %}
+<h1>Scraper Run Failed!</h1>
+
+<p>We're sorry the scraper failed to pull data from sne.space based on the file name you specified. If you like, head back to the <a href="{{ url_for('datacreation') }}">data creation</a> page to retry with a different file, or head ot the <a href="{{ url_for('uploadcsv') }}">CSV Upload</a> page to upload a new csv file to work from.</p>
+{% endblock %}

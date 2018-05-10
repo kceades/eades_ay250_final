@@ -33,7 +33,7 @@ class Parameters(snmc.Parameters):
 		# getting all the fields from snmc.Parameters
 		snmc.Parameters.__init__(self)
 		# the number of components used in the analysis objects
-		self.num_components = 15
+		self.num_components = 25
 		# the modes of analysis
 		self.model_modes = ['PCA','emFA']
 		# the types of signals we can look at
@@ -58,13 +58,16 @@ class DataGenerator(object):
 	Class to generate data to be used in analyses: it generates based on the
 	signal type you want to give it, the source and the model mode.
 	"""
-	def __init__(self):
+	def __init__(self,snmc_pars=None):
 		""" Constuctor """
 		self.pars = Parameters()
 		self.snset = None
 		self.snset_generator = None
 		self.a_dict = None
 		self.coeff_dict = None
+		self.snmc_pars = None
+		if snmc_pars:
+			self.snmc_pars = snmc_pars
 
 	def run_everything(self,print_progress=True):
 		"""
@@ -98,7 +101,7 @@ class DataGenerator(object):
 		:source_type: (str) choose from snmc.Parameters.sources
 		"""
 		if self.snset_generator!=source_type:
-			self.snset = snmc.SnSet(source_type)
+			self.snset = snmc.SnSet(source_type,True,True,self.snmc_pars)
 			self.snset_generator = source_type
 		filename = os.path.join(self.pars.base_dir,source_type+'_Novas_Phase.p')
 		savefile = open(filename,'wb')
@@ -112,7 +115,7 @@ class DataGenerator(object):
 		:source_type: (str) choose from snmc.Parameters.sources
 		"""
 		if self.snset_generator!=source_type:
-			self.snset = snmc.SnSet(source_type)
+			self.snset = snmc.SnSet(source_type,True,True,self.snmc_pars)
 			self.snset_generator = source_type
 		filename = os.path.join(self.pars.base_dir,source_type+'_Novas.p')
 		savefile = open(filename,'wb')
@@ -158,7 +161,7 @@ class DataGenerator(object):
 		pickle.dump(self.coeff_dict,coefffile)
 		coefffile.close()
 
-	def single_run(self,mode='emFA',num=15,phase=0,signal_mode='dust_flux'):
+	def single_run(self,mode='emFA',num=25,phase=0,signal_mode='dust_flux'):
 		"""
 		Creates the analysis object to populate self.a_dict.
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang='en-US'>
+
+<head>
+	<title>{% block title %}{% endblock %}</title>
+	<meta charset='UTF-8'>
+	<meta name='viewport' content='width=devide-width,initial-scale=1'>
+	<link rel='stylesheet' href="{{ url_for('static',filename='style.css') }}">
+</head>
+
+<body>
+	<div class='navbar' role='navigation'>
+		<ul>
+			<li><a href="{{ url_for('index') }}">Home</a></li>
+			<li><a href="{{ url_for('uploadcsv') }}">Upload CSV</a></li>
+			<li><a href="{{ url_for('datacreation') }}">Run Scripts</a></li>
+			<li><a href="{{ url_for('viewing') }}">View Results</a></li>
+		</ul>
+	</div>
+
+	{% block content %}
+	{% endblock %}
+
+</body>
+
+</html>

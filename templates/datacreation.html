@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Run Scripts{% endblock %}
+
+{% block content %}
+<h1>Run Scripts</h1>
+
+<p>On this page, you can enter in new parameters to run the various scripts with. If you wanted to chose a new set of supernovae to look at, head over to the <a href="{{ url_for('uploadcsv')}}">CSV Upload</a> page first. Then come over to this one.</p>
+
+<p>Enter in your new set of parameters or just use the default ones below.</p>
+
+<h1>Important Note: This Takes a While!!!</h1>
+
+<p>Running the scraper takes about 30 minutes on my machine with the 'defaultsne.csv' file. Running the data maker and gallery maker takes significantly less time, but still enough to where the page and your machine will be bogged down a bit. Check the terminal you are using to run this flask app for progress updates (the scraper has a tqdm bar and the gallery/data makers have mini-progress updates).</p>
+
+<h1>scraper.py</h1>
+
+<p>Run the scraper to gather the public supernovae spectra data. Make sure to run this before running the data or gallery makers.</p>
+
+<form action="{{ url_for('run_scraper') }}" method="post" enctype="multipart/form-data">
+	<p>Write the name of the CSV file to use with scraping:</p>
+	<input type="text" name="filename" value="defaultsne.csv">
+	<input type="submit" value="Run the Scraper">
+</form>
+
+<h1>creator.py</h1>
+
+<p>Run the creator to turn the scraped data into a normalized, "cleaned" set that can be used to develop the model. Only run this after running the scraper above.</p>
+
+<form action="{{ url_for('run_creator') }}" method="post" enctype="multipart/form-data">
+	<p>Starting wavelength:</p><input type="text" name="wv_start" value="3800">
+	<p>Wavelength step:</p><input type="text" name="wv_step" value="10">
+	<p>Ending wavelength:</p><input type="text" name="wv_end" value="8000">
+	<p>Starting phase:</p><input type="text" name="phase_start" value="-10">
+	<p>Phase step:</p><input type="text" name="phase_step" value="5">
+	<p>Ending phase:</p><input type="text" name="phase_end" value="40">
+	<input type="submit" value="Create the Data">
+</form>
+
+<h1>base.py</h1>
+
+<p>Run the base script to create galleries seeing how well the public supernova.</p>
+
+<form action="{{ url_for('base') }}" method="post" enctype="multipart/form-data">
+	<input type="submit" value="Create the Galleries">
+</form>
+{% endblock %}

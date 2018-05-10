@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: Data Creation Successful!{% endblock %}
+
+{% block content %}
+<h1>Creator Ran Successfully!</h1>
+
+<p>Congratulations, the data creator executed successfully and created pickled files of useful dictionaries with various objects in them. If you like, head back to the <a href="{{ url_for('datacreation') }}">data creation</a> page to now create the gallery that you can view.</p>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}PubSNE: View Results{% endblock %}
+
+{% block content %}
+<h1>View Results</h1>
+
+<p>On this page, you can view various different things related to the public supernova that you downloaded. If you haven't already, go back to the <a href="{{ url_for('datacreation') }}">data creation</a> and run through all the scripts there before proceeding here.</p>
+
+<h1>View the Model</h1>
+
+<p>Here, you can view the components that make up the supernova model at a given phase and model type. For the phase, please select a phase from what was used in the data creation (default is -10,-5,...,40).</p>
+
+<select name="source" form="comp_form">
+	<option value="Public">Public</option>
+	<option value="Public_FIXED" selected="selected">Rephased Public</option>
+</select>
+<select name="mode" form="comp_form">
+	<option value="PCA" selected="selected">Principle Component Analysis</option>
+	<option value="emFA">Expectation Maximization Factor Analysis (emFA)</option>
+</select>
+
+<form action="{{ url_for('view_model') }}" method="post" enctype="multipart/form-data" id="comp_form">
+	<p>Phase:</p><input type="text" name="phase" value="0">
+	<input type="submit" value="View Components">
+</form>
+
+<h1>View the Explained Variance</h1>
+<p>Here you can view the explained variance curves from the supernova model. For the phase, please select a phase from what was used in the data creation (default is -10,-5,...,40).</p>
+
+<select name="mode" form="var_form">
+	<option value="PCA" selected="selected">Principle Component Analysis</option>
+	<option value="emFA">Expectation Maximization Factor Analysis (emFA)</option>
+</select>
+
+<form action="{{ url_for('view_var') }}" method="post" enctype="multipart/form-data" id="var_form">
+	<p>Phase:</p><input type="text" name="phase" value="0">
+	<input type="submit" value="View Components">
+</form>
+
+<h1>View the Gallery of Fits</h1>
+<p>Here you can view how well the model fits the supernova at the various phases. For the phase, please select a phase from what was used in the data creation (default i s-10,-5,...,40).</p>
+
+<p>TODO: I had a lot of trouble getting the routing and sorting to work the way I wanted it to for this at the moment, so this remains on the todo list even though it's arguably the most interesting to look at. For now, one could navigate to the results/images_{mode} folder where {mode} is either emFA or PCA and open the html files there in the browser.</p>
+{% endblock %}
