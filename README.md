@@ -46,6 +46,8 @@ On the machine learning side, all the data that is under the source name of "Pub
 
 Overall, I'm fairly pleased with how the site turned out, especially given the endless problems I ran into converting my code into something I could link up with a Flask app in a reasonable fashion. Converting the code took quite a bit of time even though at the end of the day it probably doesn't look like much.
 
+Towards the end, I was working on a query tool. It works to give metadata about the supernova to see if it's in the system, but at the moment doesn't allow for further query about spectra.
+
 # Important Disclaimer(s)
 
 First and foremost, the data is TOO LARGE to run in a reasonable amount of time for a website. The website was really just meant to make things easier to work with and change, but when running the scraper or the base scripts for example, the page will lock up for a significant amount of time (on the order of tens of minutes). So be warned. If you want, you could download a smaller CSV file from sne.space (where all the data here was obtained) and input it to the system to play around with things.
